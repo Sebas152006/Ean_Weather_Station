@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ean Weather Station - Mapa</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+  <link rel="stylesheet" href="Css/mapa.css">
+  <link rel="icon" href="Img/Logo.png" type="image/png">
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h2>Menú</h2>
+    <a onclick="window.location.href='index.html';">Weather</a>
+    <a onclick="window.location.href='mapa.html';">Map</a>
+    <a onclick="abrirSettings()">Settings</a>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+    <h2>Mapa mundial interactivo</h2>
+    <p>Haz clic en cualquier parte del mapa para ver el clima</p>
+    <div id="map"></div>
+  </div>
+
+  <!-- Modal Settings -->
+  <div id="settingsModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="cerrarSettings()">&times;</span>
+      <h3>⚙️ Configuración</h3>
+      <label for="unidad">Unidad de temperatura:</label>
+      <select id="unidad" onchange="cambiarUnidad()">
+        <option value="C">Celsius (°C)</option>
+        <option value="K">Kelvin (K)</option>
+        <option value="F">Fahrenheit (°F)</option>
+        <option value="R">Rankine (°R)</option>
+        <option value="Re">Réaumur (°Re)</option>
+      </select>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="Js/mapa.js"></script>
+</body>
+</html>

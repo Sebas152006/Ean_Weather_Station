@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ean Weather Station</title>
+  <link rel="stylesheet" href="/Css/index.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+  <link rel="icon" href="Img/Logo.png" type="image/png">
+
+</head>
+<body>
+  <!-- Splash -->
+  <div id="splash">
+    <h1>🌤️ Ean Weather Station</h1>
+    <p style="opacity:0.8;font-size:1rem;">Cargando datos del clima...</p>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h2>Menú</h2>
+    <a onclick="window.location.href='index.html';">Weather</a>
+    <a onclick="window.location.href='mapa.html';">Map</a>
+    <a onclick="abrirSettings()">Settings</a>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="search-box">
+      <input type="text" id="city" placeholder="Buscar ciudad..." aria-label="Buscar ciudad"/>
+      <button id="searchBtn" onclick="getWeather()">Buscar</button>
+    </div>
+
+    <!-- Clima actual -->
+    <div class="card current-weather" id="current" aria-live="polite">
+      <div>
+        <h2>Ciudad</h2>
+        <h1>--°C</h1>
+        <p>Condición actual</p>
+      </div>
+      <div id="icon" style="font-size:3rem;">☀️</div>
+    </div>
+
+    <!-- Pronóstico por horas (HOY) -->
+    <div class="card">
+      <h3>Hoy</h3>
+      <div class="forecast-wrapper">
+        <button id="scroll-left" class="scroll-btn left">&lt;</button>
+        <div class="forecast-hours" id="forecast-hours"></div>
+        <button id="scroll-right" class="scroll-btn right">&gt;</button>
+      </div>
+    </div>
+
+    <!-- Pronóstico por 7 días -->
+    <div class="card">
+      <h3>Próximos 7 días</h3>
+      <div class="forecast-days" id="forecast-days"></div>
+    </div>
+  </div>
+
+  <!-- Modal Settings -->
+  <div id="settingsModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="cerrarSettings()">&times;</span>
+      <h3>⚙️ Configuración</h3>
+      <label for="unidad">Unidad de temperatura:</label>
+      <select id="unidad" onchange="cambiarUnidad()">
+        <option value="C">Celsius (°C)</option>
+        <option value="K">Kelvin (K)</option>
+        <option value="F">Fahrenheit (°F)</option>
+        <option value="R">Rankine (°R)</option>
+        <option value="Re">Réaumur (°Re)</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script src="Js/index.js"></script>
+</body>
+<html>
