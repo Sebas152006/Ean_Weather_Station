@@ -4,7 +4,289 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Ean Weather Station</title>
-  <link rel="stylesheet" href="index.css">
+  <style>    /* Fuente moderna */
+    body {
+      margin: 0;
+      font-family: 'Poppins','Segoe UI', sans-serif;
+      background: #0d1117;
+      color: #fff;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* === Splash Screen === */
+    #splash {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, #0d1117, #00a859);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      color: #fff;
+      font-size: 2rem;
+      font-weight: bold;
+      animation: fadeOut 1s ease 2.5s forwards;
+    }
+    #splash h1 {
+      margin: 0;
+      font-size: 2.5rem;
+      background: linear-gradient(90deg, #00ff99, #00a859);
+      -webkit-background-clip: text;
+      background-clip: text;
+      background-clip: text;
+      background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    @keyframes fadeOut {
+      to { opacity: 0; visibility: hidden; }
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 220px;
+      background: linear-gradient(180deg, #0d1117 70%, #00a859 100%);
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      flex-shrink: 0;
+    }
+    .sidebar h2 {
+      margin-bottom: 30px;
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .sidebar a {
+      text-decoration: none;
+      color: #c9d1d9;
+      margin: 10px 0;
+      display: block;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .sidebar a:hover {
+      color: #00ff99;
+      transform: translateX(5px);
+    }
+
+    /* Main */
+    .main {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .search-box {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    input {
+      flex: 1;
+      padding: 10px;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      background: #0b1220;
+      color: #fff;
+    }
+    button {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #00a859, #007f4f);
+      color: #fff;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: linear-gradient(135deg, #00ff99, #00a859);
+      box-shadow: 0 0 8px #00ff99;
+    }
+
+    .card {
+      background: #161b22;
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 12px rgba(0, 168, 89, 0.3);
+      border: 1px solid rgba(0,168,89,0.4);
+    }
+
+    .current-weather {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .current-weather h1 {
+      font-size: 2.5rem;
+      margin: 0;
+      background: linear-gradient(90deg, #00ff99, #00a859);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Forecast - HOY: scroll horizontal */
+    .forecast-wrapper {
+      position: relative;
+      margin-top: 10px;
+    }
+    .scroll-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255,255,255,0.08);
+      border: none;
+      color: #fff;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 5;
+    }
+    .scroll-btn.left { left: 6px; }
+    .scroll-btn.right { right: 6px; }
+    .forecast-hours {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding: 12px 48px;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+    }
+    .forecast-hours::-webkit-scrollbar {
+      height: 8px;
+    }
+    .forecast-hours::-webkit-scrollbar-thumb {
+      background: #2b3440;
+      border-radius: 6px;
+    }
+    .hour-card {
+      flex: 0 0 96px;
+      width: 96px;
+      text-align: center;
+      background: #21262d;
+      padding: 10px;
+      border-radius: 12px;
+      scroll-snap-align: center;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+    .hour-card h4, .day-card h4 {
+      margin: 5px 0;
+      font-size: 0.9rem;
+    }
+
+    /* Forecast days */
+    .forecast-days {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .day-card {
+      background: #21262d;
+      border-radius: 12px;
+      padding: 10px;
+      text-align: center;
+    }
+
+    /* Modal Settings */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background: #161b22;
+      color: #fff;
+      padding: 25px;
+      border-radius: 15px;
+      width: 300px;
+      text-align: center;
+      box-shadow: 0 0 15px rgba(0,255,153,0.4);
+      border: 1px solid rgba(0,168,89,0.5);
+      animation: fadeIn 0.3s ease-in-out;
+    }
+    .modal-content h3 {
+      margin-top: 0;
+      background: linear-gradient(90deg, #00ff99, #00a859);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .modal-content label {
+      display: block;
+      margin: 15px 0 8px;
+      color: #c9d1d9;
+    }
+    .modal-content select {
+      padding: 8px;
+      border-radius: 10px;
+      border: none;
+      background: #0d1117;
+      color: #fff;
+      width: 100%;
+      outline: none;
+      transition: 0.3s;
+    }
+    .modal-content select:focus {
+      box-shadow: 0 0 8px #00ff99;
+      border: 1px solid #00ff99;
+    }
+    .close {
+      float: right;
+      font-size: 20px;
+      cursor: pointer;
+      color: #ccc;
+    }
+    .close:hover {
+      color: #00ff99;
+    }
+
+    /* Responsivo */
+    @media (max-width: 768px) {
+      body {
+        flex-direction: column;
+        overflow: auto;
+      }
+      .sidebar {
+        flex-direction: row;
+        width: 100%;
+        justify-content: space-around;
+        overflow-x: auto;
+        padding: 10px;
+      }
+      .sidebar h2 {
+        margin: 0;
+        font-size: 1rem;
+      }
+      .sidebar a {
+        margin: 0 8px;
+        font-size: 0.9rem;
+      }
+      .main {
+        padding: 12px;
+      }
+      .forecast-hours {
+        padding: 12px 16px;
+      }
+      .scroll-btn { display: none; }
+    }</style>
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
   <link rel="icon" href="Img/Logo.png" type="image/png">
